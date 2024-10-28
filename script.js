@@ -141,8 +141,25 @@ function showWorkoutDetails(id) {
         table.appendChild(row);
     });
 
+    // Botão para editar o treino
+    const editButton = document.createElement('button');
+    editButton.textContent = 'Editar Treino';
+    editButton.onclick = () => editWorkout(id);
+    document.getElementById('workout-details').appendChild(editButton);
+    
     document.getElementById('home').classList.add('hidden');
     document.getElementById('workout-details').classList.remove('hidden');
+}
+
+function editWorkout(id) {
+    const workouts = JSON.parse(localStorage.getItem(workoutsKey)) || [];
+    const workout = workouts.find(w => w.id == id);
+
+    // Implementar lógica para exibir o formulário de edição com os dados do treino
+    // Exemplo: preencher campos com `workout.name`, `workout.date`, `workout.exercises`, etc.
+    // Após editar, salvar as mudanças no localStorage e recarregar a lista de treinos.
+
+    alert(`Função de edição para o treino ${id} ainda não implementada.`);
 }
 
 function showHome() {
