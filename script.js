@@ -51,6 +51,7 @@ function showExercises() {
         const div = document.createElement('div');
         div.innerHTML = `
             <label>${exercise}</label>
+<br>
             <input type="number" placeholder="Série 1 - Peso">
             <input type="number" placeholder="Série 1 - Repetições">
             <input type="number" placeholder="Série 2 - Peso">
