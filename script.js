@@ -42,9 +42,9 @@ function showExercises() {
     exercisesContainer.innerHTML = '';
 
     const exercises = {
-        'Treino 1': ['Supino Reto com Barra', 'Supino Vertical', 'Cross Over Polia Baixa', 'Elevação Lateral', 'Tríceps Francês', 'Tríceps Pulley'],
+        'Treino 1': ['Supino Inclinado com Halteres', 'Supino Vertical', 'Cross Over Polia Alta', 'Elevação Lateral', 'Tríceps Francês', 'Tríceps Pulley'],
         'Treino 2': ['Agachamento Barra', 'Leg Press', 'Extensora', 'Elevação Pélvica', 'Flexora Deitada', 'Stiff'],
-        'Treino 3': ['Levantamento Terra', 'Barra Fixa', 'Remada Curvada Pronada', 'Face Pull', 'Rosca Scott', 'Rosca Martelo']
+        'Treino 3': ['Barra Fixa', 'Remada Curvada Pronada', 'Remada Sentada Neutra', 'Face Pull', 'Rosca Scott', 'Rosca Martelo']
     };
 
     exercises[type].forEach(exercise => {
