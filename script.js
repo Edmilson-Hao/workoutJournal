@@ -151,14 +151,42 @@ function showWorkoutDetails(id) {
     document.getElementById('workout-details').classList.remove('hidden');
 }
 
+editButton.onclick = () => editWorkout(id);
+
+
 function editWorkout(id) {
     const workouts = JSON.parse(localStorage.getItem(workoutsKey)) || [];
-    const workout = workouts.find(w => w.id === id);
+    const workout = workouts.find(w => w.id.toString() === id.toString()); // Comparação convertendo ambos para string
 
     if (!workout) {
         alert('Treino não encontrado.');
         return;
     }
+
+    // Resto do código para exibir o formulário de edição
+    const editContainer = document.getElementById('edit-workout');
+    editContainer.innerHTML = `
+        <h3>Editar Treino: ${workout.name}</h3>
+        <label for="edit-date">Data:</label>
+        <input type="date" id="edit-date" value="${new Date(workout.date).toISOString().split('T')[0]}" />
+        <div id="edit-exercises">
+            ${workout.exercises.map((exercise, i) => `
+                <div>
+                    <label>${exercise.name}</label>
+                    ${exercise.data.map((value, index) => `
+                        <input type="number" value="${value}" placeholder="Série ${Math.floor(index/2) + 1} ${index % 2 === 0 ? 'Peso' : 'Repetições'}">
+                    `).join('')}
+                </div>
+            `).join('')}
+        </div>
+        <button onclick="saveEditedWorkout(${id})">Salvar Alterações</button>
+        <button onclick="showWorkoutDetails(${id})">Cancelar</button>
+    `;
+
+    document.getElementById('workout-details').classList.add('hidden');
+    editContainer.classList.remove('hidden');
+}
+
 
     // Mostra o formulário de edição
     const editContainer = document.getElementById('edit-workout');
