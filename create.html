@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Treino</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Criar Novo Treino</h1>
+        <select id="workoutSelector" onchange="showInputs()">
+            <option value="">Selecione um treino</option>
+            <option value="Treino 1">Treino 1</option>
+            <option value="Treino 2">Treino 2</option>
+            <option value="Treino 3">Treino 3</option>
+        </select>
+        <div id="inputFields"></div>
+        <button onclick="saveWorkout()">Salvar</button>
+        <button onclick="location.href='index.html'">Cancelar</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

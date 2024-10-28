@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <title>Workout Journal</title>
+</head>
+<body>
+    <div id="home" class="page">
+        <h1>Workout Journal</h1>
+        <ul id="workout-list"></ul>
+        <div class="buttons">
+            <button onclick="importData()">Importar</button>
+            <button onclick="exportData()">Exportar</button>
+            <button onclick="resetData()">Reset</button>
+            <button onclick="showCreateWorkout()">Novo Treino</button>
+        </div>
+    </div>
+
+    <div id="create-workout" class="page hidden">
+        <h1>Criar Novo Treino</h1>
+        <select id="workout-type" onchange="showExercises()">
+            <option value="">Selecione um treino</option>
+            <option value="Treino 1">Treino 1</option>
+            <option value="Treino 2">Treino 2</option>
+            <option value="Treino 3">Treino 3</option>
+        </select>
+        <div id="exercises" class="exercises"></div>
+        <button onclick="cancelCreate()">Cancelar</button>
+        <button onclick="saveWorkout()">Salvar</button>
+	<div id="last-workout"></div>
+
+    </div>
+
+    <div id="workout-details" class="page hidden">
+        <h1>Detalhes do Treino</h1>
+        <table id="details-table"></table>
+        <button onclick="showHome()">Voltar</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

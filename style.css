@@ -1,0 +1,74 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    display: none;
+}
+
+.page:not(.hidden) {
+    display: block;
+}
+
+h1 {
+    margin: 20px 0;
+    font-size: 1.5em;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.buttons {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007aff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 80%; /* Botões responsivos */
+}
+
+button:hover {
+    background-color: #005bb5;
+}
+
+.exercises div {
+    margin: 10px 0;
+}
+
+input {
+    margin: 0 5px;
+    padding: 5px;
+    width: 70%; /* Inputs responsivos */
+}
+
+/* Media Queries para dispositivos maiores */
+@media (min-width: 600px) {
+    .buttons {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    button {
+        width: auto;
+    }
+
+    input {
+        width: auto;
+    }
+}
