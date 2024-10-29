@@ -50,14 +50,16 @@ function showExercises() {
     exercises[type].forEach(exercise => {
         const div = document.createElement('div');
         div.innerHTML = `
-            <label>${exercise}</label>
-<br>
+            <label>${exercise}</label><br>
             <input type="number" placeholder="Série 1 - Peso">
             <input type="number" placeholder="Série 1 - Repetições">
             <input type="number" placeholder="Série 2 - Peso">
             <input type="number" placeholder="Série 2 - Repetições">
             <input type="number" placeholder="Série 3 - Peso">
-            <input type="number" placeholder="Série 3 - Repetições">
+            <input type="number" placeholder="Série 3 - Repetições"><br>
+            <label>Execução:</label>
+            <label><input type="radio" name="execution-${exercise}" value="Boa"> Boa Execução</label>
+            <label><input type="radio" name="execution-${exercise}" value="Ruim"> Execução Ruim</label>
         `;
         exercisesContainer.appendChild(div);
     });
@@ -67,13 +69,17 @@ function showExercises() {
 
 function showLastWorkout(type) {
     const workouts = JSON.parse(localStorage.getItem(workoutsKey)) || [];
-    const lastWorkout = workouts.reverse().find(workout => workout.name === type); // Busca o último treino do tipo selecionado
+    const lastWorkout = workouts.reverse().find(workout => workout.name === type);
     const lastWorkoutContainer = document.getElementById('last-workout');
 
     if (lastWorkout) {
         let lastWorkoutHTML = `<h3>Último treino (${lastWorkout.date}):</h3>`;
         lastWorkout.exercises.forEach(exercise => {
-            lastWorkoutHTML += `<p><strong>${exercise.name}:</strong> ${exercise.data.join(', ')}</p>`;
+            const executionText = exercise.execution === 'N/A' ? 'Execução não registrada' : exercise.execution;
+            lastWorkoutHTML += `
+                <p><strong>${exercise.name}:</strong> ${exercise.data.join(', ')}<br>
+                <strong>Execução:</strong> ${executionText}</p>
+            `;
         });
         lastWorkoutContainer.innerHTML = lastWorkoutHTML;
     } else {
@@ -81,15 +87,24 @@ function showLastWorkout(type) {
     }
 }
 
+
+
+
 function saveWorkout() {
     const workoutType = document.getElementById('workout-type').value;
     const exercisesElements = Array.from(document.querySelectorAll('.exercises > div'));
     const exercises = exercisesElements.map(div => {
-        const inputs = div.querySelectorAll('input');
+        const inputs = div.querySelectorAll('input[type="number"]');
         const data = Array.from(inputs).map(input => input.value).filter(value => value);
+
+        // Captura a escolha de execução dos radio-buttons corretamente
+        const execution = div.querySelector(`input[name="execution-${div.querySelector('label').innerText}"]:checked`);
+        const executionValue = execution ? execution.value : 'N/A';
+
         return {
             name: div.querySelector('label').innerText,
             data: data,
+            execution: executionValue
         };
     });
 
@@ -107,11 +122,13 @@ function saveWorkout() {
     loadWorkouts();
 }
 
+
+
 function showWorkoutDetails(id) {
     const workouts = JSON.parse(localStorage.getItem(workoutsKey)) || [];
     const workout = workouts.find(w => w.id == id);
     const table = document.getElementById('details-table');
-    table.innerHTML = `<tr><th>Exercício</th><th>Dados</th><th>Tonelagem Total</th></tr>`;
+    table.innerHTML = `<tr><th>Exercício</th><th>Dados</th><th>Tonelagem Total</th><th>Execução</th></tr>`;
     
     workout.exercises.forEach(exercise => {
         const series = [];
@@ -136,14 +153,21 @@ function showWorkoutDetails(id) {
             return acc + (weight * reps);
         }, 0);
 
+        // Inclui a execução de cada exercício na exibição
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${exercise.name}</td><td>${repsAndWeights.join(', ')}</td><td>${totalTonelagem} kg</td>`;
+        row.innerHTML = `
+            <td>${exercise.name}</td>
+            <td>${repsAndWeights.join(', ')}</td>
+            <td>${totalTonelagem} kg</td>
+            <td>${exercise.execution || 'Execução não registrada'}</td>
+        `;
         table.appendChild(row);
     });
 
     document.getElementById('home').classList.add('hidden');
     document.getElementById('workout-details').classList.remove('hidden');
 }
+
 
 function showHome() {
     document.getElementById('workout-details').classList.add('hidden');
