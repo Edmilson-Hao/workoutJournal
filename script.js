@@ -124,23 +124,19 @@ function saveWorkout() {
 
 
 
+
+
 function showWorkoutDetails(id) {
     const workouts = JSON.parse(localStorage.getItem(workoutsKey)) || [];
     const workout = workouts.find(w => w.id == id);
     const table = document.getElementById('details-table');
     table.innerHTML = `<tr><th>Exercício</th><th>Dados</th><th>Tonelagem Total</th><th>Execução</th></tr>`;
     
-    workout.exercises.forEach(exercise => {
-        const series = [];
-        const weightsAndReps = exercise.data.map((value, index) => {
-            if (index % 2 === 0) return parseFloat(value); // Peso
-            return null; // Ignora as repetições para o cálculo
-        }).filter(weight => weight !== null);
-
-        const repsAndWeights = exercise.data.reduce((acc, value, index) => {
-            if (index % 2 === 0) {
+    workout.exercises.forEach((exercise, index) => {
+        const repsAndWeights = exercise.data.reduce((acc, value, idx) => {
+            if (idx % 2 === 0) {
                 const weight = parseFloat(value);
-                const reps = parseFloat(exercise.data[index + 1]);
+                const reps = parseFloat(exercise.data[idx + 1]);
                 if (reps) {
                     acc.push(`${reps}@${weight} kg`);
                 }
@@ -148,25 +144,98 @@ function showWorkoutDetails(id) {
             return acc;
         }, []);
 
-        const totalTonelagem = weightsAndReps.reduce((acc, weight, index) => {
-            const reps = parseFloat(exercise.data[index * 2 + 1]);
-            return acc + (weight * reps);
+        const totalTonelagem = exercise.data.reduce((acc, value, idx) => {
+            if (idx % 2 === 0) {
+                const weight = parseFloat(value);
+                const reps = parseFloat(exercise.data[idx + 1]);
+                return acc + (weight * reps);
+            }
+            return acc;
         }, 0);
 
-        // Inclui a execução de cada exercício na exibição
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${exercise.name}</td>
-            <td>${repsAndWeights.join(', ')}</td>
+            <td>
+                <input type="text" value="${exercise.data.join(', ')}" disabled id="data-${index}">
+            </td>
             <td>${totalTonelagem} kg</td>
-            <td>${exercise.execution || 'Execução não registrada'}</td>
+            <td>
+                <select id="execution-${index}" disabled>
+                    <option value="Boa Execução" ${exercise.execution === 'Boa Execução' ? 'selected' : ''}>Boa Execução</option>
+                    <option value="Execução Ruim" ${exercise.execution === 'Execução Ruim' ? 'selected' : ''}>Execução Ruim</option>
+                </select>
+            </td>
         `;
         table.appendChild(row);
     });
 
+    // Evita adicionar botões duplicados
+    if (!document.getElementById('edit-button')) {
+        const editButton = document.createElement('button');
+        editButton.innerText = 'Editar';
+        editButton.id = 'edit-button';
+        editButton.onclick = enableEditing;
+        table.parentElement.appendChild(editButton);
+    }
+
+    if (!document.getElementById('save-button')) {
+        const saveButton = document.createElement('button');
+        saveButton.innerText = 'Salvar';
+        saveButton.style.display = 'none';
+        saveButton.id = 'save-button';
+        saveButton.onclick = () => saveEdits(id);
+        table.parentElement.appendChild(saveButton);
+    }
+
     document.getElementById('home').classList.add('hidden');
     document.getElementById('workout-details').classList.remove('hidden');
 }
+
+
+function enableEditing() {
+    const table = document.getElementById('details-table');
+    Array.from(table.querySelectorAll('input, select')).forEach(input => {
+        input.disabled = false;
+    });
+    document.getElementById('save-button').style.display = 'inline';
+}
+
+
+
+function saveEdits(id) {
+    const workouts = JSON.parse(localStorage.getItem(workoutsKey)) || [];
+    const workoutIndex = workouts.findIndex(w => w.id == id);
+
+    const table = document.getElementById('details-table');
+    const updatedExercises = Array.from(table.querySelectorAll('tr')).slice(1).map((row, index) => {
+        const dataInput = row.querySelector(`#data-${index}`).value.split(',').map(item => item.trim()).filter(item => item); // Remove valores vazios
+        const parsedData = dataInput.flatMap(data => {
+            const [reps, weight] = data.split('@').map(item => item.trim().replace('kg', ''));
+            return [weight, reps].filter(value => value); // Remove qualquer valor vazio
+        });
+
+        const executionSelect = row.querySelector(`#execution-${index}`).value;
+
+        return {
+            name: workouts[workoutIndex].exercises[index].name,
+            data: parsedData,
+            execution: executionSelect
+        };
+    });
+
+    workouts[workoutIndex].exercises = updatedExercises;
+    localStorage.setItem(workoutsKey, JSON.stringify(workouts));
+
+    Array.from(table.querySelectorAll('input, select')).forEach(input => {
+        input.disabled = true;
+    });
+    document.getElementById('save-button').style.display = 'none';
+    alert('Alterações salvas com sucesso!');
+}
+
+
+
 
 
 function showHome() {
